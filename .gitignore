@@ -24,7 +24,9 @@ Thumbs.db
 
 # Playwright
 .playwright-cli/
+.playwright-mcp/
 output/
+*.png
 
 # Backup
 backup/
