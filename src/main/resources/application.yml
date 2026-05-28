@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: seckill-system
+  
+  # 数据源配置
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  flyway:
+    enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+  # Thymeleaf配置
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+    content-type: text/html
+    enabled: true
+    encoding: UTF-8
+    mode: HTML
+
+# MyBatis配置
+mybatis:
+  type-aliases-package: com.jesper.seckill.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 3000
+  mapper-locations: classpath:mapper/*.xml
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,beans,configprops
+  endpoint:
+    health:
+      show-details: always
+
+# Swagger配置
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.jesper.seckill: DEBUG
+    org.springframework.web: INFO
+    org.mybatis: DEBUG

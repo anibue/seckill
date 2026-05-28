@@ -1,0 +1,33 @@
+# GitHub Actions
+.github/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright
+.playwright-cli/
+output/
+
+# Backup
+backup/
+
+# Test scripts
+test_*.py
