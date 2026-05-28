@@ -1,7 +1,6 @@
 package com.jesper.seckill.rabbitmq;
 
 import com.jesper.seckill.config.RabbitMQConfig;
-import com.jesper.seckill.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,8 @@ public class MQSender {
     private AmqpTemplate amqpTemplate;
 
     public void sendSeckillMessage(SeckillMessage message) {
-        String msg = RedisService.beanToString(message);
-        log.info("send message: {}", msg);
-        amqpTemplate.convertAndSend(RabbitMQConfig.QUEUE, msg);
+        log.info("send message: {}", message);
+        // 直接发送对象，由Spring AMQP Jackson消息转换器处理序列化
+        amqpTemplate.convertAndSend(RabbitMQConfig.QUEUE, message);
     }
 }

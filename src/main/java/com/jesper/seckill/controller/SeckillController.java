@@ -58,7 +58,8 @@ public class SeckillController {
         List<GoodsVo> goodsVoList = goodsService.listGoodsVo();
         if (goodsVoList != null) {
             for (GoodsVo goods : goodsVoList) {
-                redisService.set(GoodsKey.getGoodsStock, "" + goods.getId(), goods.getStockCount());
+                // 仅当键不存在时才设置，避免重启时重置已结束的秒杀库存
+                redisService.setIfAbsent(GoodsKey.getGoodsStock, "" + goods.getId(), goods.getStockCount());
                 localOverMap.put(goods.getId(), false);
             }
         }
@@ -80,17 +81,19 @@ public class SeckillController {
             return Result.error(CodeMsg.SECKILL_OVER);
         }
 
+        // 判断重复秒杀（先去重，避免重复请求消耗库存）
+        SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
+        if (order != null) {
+            return Result.error(CodeMsg.REPEATE_SECKILL);
+        }
+
         // 预减库存
         Long stock = redisService.decr(GoodsKey.getGoodsStock, "" + goodsId);
         if (stock == null || stock < 0) {
             localOverMap.put(goodsId, true);
+            // 库存不足时回补Redis库存，避免负数
+            redisService.incr(GoodsKey.getGoodsStock, "" + goodsId);
             return Result.error(CodeMsg.SECKILL_OVER);
-        }
-
-        // 判断重复秒杀
-        SeckillOrder order = orderService.getOrderByUserIdGoodsId(user.getId(), goodsId);
-        if (order != null) {
-            return Result.error(CodeMsg.REPEATE_SECKILL);
         }
 
         // 入队

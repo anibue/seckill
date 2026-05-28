@@ -104,9 +104,12 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         User user = redisService.get(UserKey.token, token, User.class);
-        // 延长有效期，有效期等于最后一次操作+有效期
+        // 延长有效期：仅当剩余TTL小于50%时刷新，减少Redis写入
         if (user != null) {
-            addCookie(response, token, user);
+            Long ttl = redisService.getTtl(UserKey.token, token);
+            if (ttl != null && ttl < UserKey.token.expireSeconds() * 0.5) {
+                addCookie(response, token, user);
+            }
         }
         return user;
     }

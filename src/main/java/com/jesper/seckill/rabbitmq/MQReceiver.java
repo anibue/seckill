@@ -27,15 +27,15 @@ public class MQReceiver {
     private SeckillService seckillService;
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE)
-    public void receive(String message) {
+    public void receive(SeckillMessage message) {
         log.info("receive message: {}", message);
-        SeckillMessage m = RedisService.stringToBean(message, SeckillMessage.class);
-        User user = m.getUser();
-        long goodsId = m.getGoodsId();
+        User user = message.getUser();
+        long goodsId = message.getGoodsId();
 
+        // Redis预减库存已保护，无需再次检查库存
+        // 直接查询商品信息用于下单
         GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);
-        int stock = goodsVo.getStockCount();
-        if (stock <= 0) {
+        if (goodsVo == null) {
             return;
         }
 

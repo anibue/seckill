@@ -14,8 +14,6 @@ import java.util.List;
 @Slf4j
 public class GoodsServiceImpl implements GoodsService {
 
-    private static final int DEFAULT_MAX_RETRIES = 5;
-
     @Autowired
     private GoodsMapper goodsMapper;
 
@@ -31,23 +29,11 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public boolean reduceStock(GoodsVo goods) {
-        int numAttempts = 0;
-        int ret = 0;
         SeckillGoods sg = new SeckillGoods();
         sg.setGoodsId(goods.getId());
         sg.setVersion(goods.getVersion());
-        do {
-            numAttempts++;
-            try {
-                sg.setVersion(goodsMapper.getVersionByGoodsId(goods.getId()));
-                ret = goodsMapper.reduceStockByVersion(sg);
-            } catch (Exception e) {
-                log.error("Reduce stock error: {}", e.getMessage());
-            }
-            if (ret != 0)
-                break;
-        } while (numAttempts < DEFAULT_MAX_RETRIES);
-
+        // MQ单线程消费已序列化写入，无需乐观锁重试
+        int ret = goodsMapper.reduceStockByVersion(sg);
         return ret > 0;
     }
 }
