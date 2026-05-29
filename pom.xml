@@ -104,13 +104,6 @@
             <version>3.0.3</version>
         </dependency>
 
-        <!-- Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.6.0-jre</version>
-        </dependency>
-
         <!-- Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -132,7 +125,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-webmvc-test</artifactId>
-            <version>4.0.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
