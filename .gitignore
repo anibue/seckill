@@ -33,3 +33,5 @@ backup/
 
 # Test scripts
 test_*.py
+UPGRADE_PLAN.md
+.gitignore
