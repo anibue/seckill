@@ -26,7 +26,7 @@ public class RedisHealthIndicator implements HealthIndicator {
             return Health.down().withDetail("redis", "Not responding").build();
         } catch (Exception e) {
             log.error("Redis health check failed: {}", e.getMessage());
-            return Health.down().withDetail("redis", "Error: " + e.getMessage()).build();
+            return Health.down().withException(e).build();
         }
     }
 }
